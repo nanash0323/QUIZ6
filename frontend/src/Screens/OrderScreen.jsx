@@ -14,12 +14,15 @@ function OrderScreen() {
 
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  
   const orderDetails = useSelector((state) => state.orderDetails);
   const { order, error, loading } = orderDetails;
-
+  
   const orderPay = useSelector((state) => state.orderPay);
   const { loading: loadingPay, success: successPay } = orderPay;
-  const [sdkReady, setSdkReady] = useState(false);
+  
+  const [sdkReady, setSdkReady] = useState(false); // Only one declaration
+  
 
   let updatedOrder = { ...order };
   if (!loading && !error) {
@@ -36,8 +39,7 @@ function OrderScreen() {
   const addPayPalScript = () => {
     const script = document.createElement("script");
     script.type = "text/javascript";
-    script.src =
-      "https://www.paypal.com/sdk/js?client-id=&currency=USD";
+    script.src ="https://www.paypal.com/sdk/js?client-id=AQql_VofYPjxjRfR-DqvuUP7jIwCg_jf3tOHhF9e922heDsZR1Esgztd-D-lF8bLK1mRIks1yPzZLlO8&currency=USD";
     script.async = true;
     script.onload = () => {
       setSdkReady(true);
@@ -58,11 +60,24 @@ function OrderScreen() {
     }
   }, [dispatch, orderId.id, order, successPay]);
 
+  const successPaymentHandler = (paymentResult) => {  
+    dispatch(payOrder(orderId.id, paymentResult))
+  }
 
   const onApproveHandler = (data, actions) => {
   }
 
   const createOrderHandler = (data, actions) => {
+    return actions.order.create({
+      purchase_units: [
+        {
+          amount: {
+            value: order.totalPrice,
+            currency_code: "USD",
+          }
+        }
+      ]
+    })
   };
   
   
@@ -199,7 +214,7 @@ function OrderScreen() {
                         <PayPalScriptProvider
                           options={{
                             "client-id":
-                              "",
+                              "AQql_VofYPjxjRfR-DqvuUP7jIwCg_jf3tOHhF9e922heDsZR1Esgztd-D-lF8bLK1mRIks1yPzZLlO8",
                           }}
                         >
                           <PayPalButtons

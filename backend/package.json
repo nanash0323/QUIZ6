@@ -1,0 +1,6 @@
+{
+  "dependencies": {
+    "@paypal/react-paypal-js": "^8.8.2",
+    "django": "^1.0.0"
+  }
+}
